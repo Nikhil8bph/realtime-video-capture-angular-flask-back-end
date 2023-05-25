@@ -1,19 +1,18 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, jsonify
 import base64
-
 app = Flask(__name__)
 
-@app.route('/send_frame', methods=['POST'])
-def receive_frame():
-    frame_data = request.get_json()
-    frame_base64 = frame_data['frame']
-
-    # Process the frame (e.g., save it as an image file)
-    # Decode the base64-encoded frame and perform any required image processing
-
-    # Return the processed frame back to the frontend
-    # return Response(response=frame_base64, status=200, mimetype='image/jpeg')
-    return jsonify({'message': 'Frame received'})
+@app.route('/process_frame', methods=['POST'])
+def process_frame():
+    frame_data = request.get_data()
+    # image_data = frame_data.replace('data:image/jpeg;base64,', '')
+    image_data = frame_data.decode('utf-8').replace('data:image/jpeg;base64,', '')
+    # Decode the base64 string to bytes
+    image_bytes = base64.b64decode(image_data)
+    response = {
+        'message': 'Frame received and processed'
+    }
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
